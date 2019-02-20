@@ -82,6 +82,37 @@ def get_neighbors(node, lines, height, width):
     return[(nx, ny) for nx, ny in[(x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y)] if 0 <= nx < width and 0 <= ny < height and lines[ny][nx] == 1]
 
 
+# def flood_fill(grid, x, y, width, height, num_snakes, length):
+
+#     # deepcopy the grid 
+#     temp = [r[:] for r in grid]
+
+#     stack = [(x, y)]
+#     count = 0
+
+#     while stack:
+#         x, y = stack.pop()
+
+#         if temp[x][y] == 1:
+#             temp[x][y] = 0
+#             count += 1
+#             if x > 0:
+#                 stack.append((x-1, y))
+#             if x < width-1:
+#                 stack.append((x+1, y))
+#             if y > 0:
+#                 stack.append((x, y-1))
+#             if y < height-1:
+#                 stack.append((x, y+1))
+
+#     print('Floodfill count: %d' % count)
+
+#     if 0 < count <  (width * height) - 2*(num_snakes * length):
+#         grid = [r[:] for r in temp]
+
+#     return grid
+
+
 def get_direction(start, end):
     currX = start[0]
     currY = start[1]
@@ -131,15 +162,24 @@ def chase_tail(a_star_object, grid_options, mySnake, head_x, head_y, isGonnaGrow
 
     return None
 
+# Quickly grow to a length of 10 then follow tail
+def get_move(grid_options, target, head_x, head_y, height, width, mySnake, myHealth, num_snakes):
 
-def get_move(grid_options, target, head_x, head_y, height, width, mySnake, myHealth):
+    # if head_x < width-1:
+    #     grid_options[0] = flood_fill(grid_options[0], head_x+1, head_y, width, height, num_snakes, len(mySnake))
+    # if 0 < head_x:
+    #     grid_options[0] = flood_fill(grid_options[0], head_x-1, head_y, width, height, num_snakes, len(mySnake))
+    # if head_y < height-1:
+    #     grid_options[0] = flood_fill(grid_options[0], head_x, head_y+1, width, height, num_snakes, len(mySnake))
+    # if 0 < head_y:
+    #     grid_options[0] = flood_fill(grid_options[0], head_x, head_y-1, width, height, num_snakes, len(mySnake))
+
     a_star_object = astar.AStarAlgorithm(grid_options[0], width, height)
 
     myLength = len(mySnake)
     move = move_to_food(a_star_object, grid_options[1], head_x, head_y)
 
-    # FIND TAIL MODE
-    if myLength > 3 and myHealth > 80 or move == None: #85
+    if myLength > 10 and myHealth > 80 or move == None:
         gonnaGrow = False
         if myHealth == 100:
             gonnaGrow = True

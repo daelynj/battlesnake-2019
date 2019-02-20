@@ -1,5 +1,6 @@
 import json, os, bottle, controller
 
+from timeit import default_timer as timer
 from api import ping_response, start_response, move_response, end_response
 
 
@@ -44,6 +45,7 @@ def start():
 
 @bottle.post('/move')
 def move():
+    debug = False
     data = bottle.request.json
 
     width = data['board']['width']
@@ -56,6 +58,9 @@ def move():
     body = data['you']['body']
     id = data['you']['id']
 
+    if debug:
+        start = timer()
+
     grid_options = controller.grid_setup(food, width, height, snakes, body, id)
 
     headX = body[0]['x']
@@ -63,7 +68,11 @@ def move():
 
     target_food = controller.get_closest_food(grid_options[1], headX, headY)
 
-    next_move = controller.get_move(grid_options, target_food, headX, headY, height, width, body, health)
+    next_move = controller.get_move(grid_options, target_food, headX, headY, height, width, body, health, len(snakes))
+
+    if debug:
+        end = timer()
+        print("RUNTIME: {0}ms. MAX 200ms, currently using {1}%".format(((end - start) * 1000),(((end - start) * 1000) / 2)))
 
     return move_response(next_move)
 
@@ -71,8 +80,6 @@ def move():
 @bottle.post('/end')
 def end():
     data = bottle.request.json
-
-    print(json.dumps(data))
 
     return end_response()
 
