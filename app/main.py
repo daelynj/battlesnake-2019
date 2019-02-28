@@ -55,24 +55,25 @@ def move():
     snakes = data['board']['snakes']
 
     health = data['you']['health']
-    body = data['you']['body']
-    id = data['you']['id']
+    mySnake = data['you']['body']
+    myID = data['you']['id']
 
     if debug:
         start = timer()
 
-    grid_options = controller.grid_setup(food, width, height, snakes, body, id)
+    # generate a board and add enemy snakes to it (should I add my body as well?)
+    board = brain.setup_board(height, width, snakes, mySnake, myID)
 
-    headX = body[0]['x']
-    headY = body[0]['y']
+    # find the closest reachable piece of food
+    food = controller.find_best_food(board, food, mySnake[0]['x'], mySnake[0]['y'])
 
-    target_food = controller.get_closest_food(grid_options[1], headX, headY)
-
-    next_move = controller.get_move(grid_options, target_food, headX, headY, height, width, body, health, len(snakes))
+    # calculate next move
+    next_move = 'right'
 
     if debug:
         end = timer()
         print("RUNTIME: {0}ms. MAX 200ms, currently using {1}%".format(((end - start) * 1000),(((end - start) * 1000) / 2)))
+
 
     return move_response(next_move)
 
