@@ -100,20 +100,16 @@ def get_next_move(board, height, width, food, mySnake, health):
    
     #find food
     next_move = move_to_food(a_star_object, mySnake[0], food)
-
-    print(next_move)
    
     # chase tale when larger or health is high
     if 10 < len(mySnake) < 20 and 80 < health or next_move == None:
         growing = (True if health == 100 else False)
         next_move = chase_tail(a_star_object, board, height, width, mySnake, growing)
-        print('chasing %d' % health)
 
      # chase tale when larger or health is high
     if 20 < len(mySnake) and 60 < health or next_move == None:
         growing = (True if health == 100 else False)
         next_move = chase_tail(a_star_object, board, height, width, mySnake, growing)
-        print('chasing %d' % health)
    
     # if we can eat or chase tail do that
     if next_move:

@@ -62,20 +62,17 @@ def move():
     if debug:
         start = timer()
 
-    if not cheat:
-        # generate a board and add enemy snakes to it (should I add my body as well?)
-        board = controller.setup_board(height, width, snakes, mySnake, myID)
+    # generate a board and add enemy snakes to it (should I add my body as well?)
+    board = controller.setup_board(height, width, snakes, mySnake, myID)
 
-        # calculate next move
-        next_move = controller.get_next_move(board, height, width, food, mySnake, health)
-    
-        # create override for when the snake backtracks on itself 
-        # ie down then next turn does up
+    # calculate next move
+    next_move = controller.get_next_move(board, height, width, food, mySnake, health)
 
-        # create a final check to ensure that if the snake does die that there 
-        # were no valid moves still left
+    # create override for when the snake backtracks on itself 
+    # ie down then next turn does up
 
-    print(next_move)
+    # create a final check to ensure that if the snake does die that there 
+    # were no valid moves still left
 
     if debug:
         end = timer()
