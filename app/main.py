@@ -46,6 +46,7 @@ def start():
 @bottle.post('/move')
 def move():
     debug = False
+   
     data = bottle.request.json
 
     width = data['board']['width']
@@ -61,14 +62,20 @@ def move():
     if debug:
         start = timer()
 
-    # generate a board and add enemy snakes to it (should I add my body as well?)
-    board = brain.setup_board(height, width, snakes, mySnake, myID)
+    if not cheat:
+        # generate a board and add enemy snakes to it (should I add my body as well?)
+        board = controller.setup_board(height, width, snakes, mySnake, myID)
 
-    # find the closest reachable piece of food
-    food = controller.find_best_food(board, food, mySnake[0]['x'], mySnake[0]['y'])
+        # calculate next move
+        next_move = controller.get_next_move(board, height, width, food, mySnake, health)
+    
+        # create override for when the snake backtracks on itself 
+        # ie down then next turn does up
 
-    # calculate next move
-    next_move = 'right'
+        # create a final check to ensure that if the snake does die that there 
+        # were no valid moves still left
+
+    print(next_move)
 
     if debug:
         end = timer()
