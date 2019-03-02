@@ -4,10 +4,11 @@ g_headWeight = 5
 g_bodyWeight = 50
 g_freeWeight = 1
 
-file = open("game_log.txt", 'a')
+# file = open("game_log.txt", 'a')
 
 def log_it(msg):
-    file.write(str(msg))
+    pass
+#     file.write(str(msg))
 
 def setup_board(height, width, snakes, myID):
     # create general board
