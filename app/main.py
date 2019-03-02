@@ -74,6 +74,8 @@ def move():
 
     # calculate next move
 
+    next_move = controller.get_next_move(board, height, width, food, mySnake, health)
+
     next_move = controller.check_direction(board, height, width, mySnake[0], mySnake[-1], health, next_move)
     log_it("\n=====MOVE=====\n")
     log_it(next_move)
