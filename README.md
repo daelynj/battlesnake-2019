@@ -3,4 +3,4 @@
 </p>
 
 ## 2019 Battlkesnake Competition AI
-Writen by Joel
+Writen by Joel, Daelyn, Braiden
