@@ -15,7 +15,6 @@ custom:
   wsgi:
     app: app/main.application
     packRequirements: false
-  pythonRequirements:
 
 
 functions:
