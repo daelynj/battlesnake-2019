@@ -7,4 +7,6 @@ test.py
 venv/
 .serverless
 
+engine_0.2.22_Windows_x86_64
+game_log.txt
 node_modules/

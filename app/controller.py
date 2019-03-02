@@ -4,13 +4,18 @@ g_headWeight = 5
 g_bodyWeight = 50
 g_freeWeight = 1
 
+file = open("game_log.txt", 'a')
+
+def log_it(msg):
+    file.write(str(msg))
+
 def setup_board(height, width, snakes, myID):
     # create general board
     board = [[1 for col in range(width)] for row in range(height)]
 
     # create list of snake locations
     for snake in snakes:
-        
+
         # add other snakes potential next moves to the board
         # NOTE this can cause issues if the snake is near a corner
         if snake['id'] != myID:
@@ -29,11 +34,11 @@ def setup_board(height, width, snakes, myID):
                 board[head['y']][left] = board[head['y']][left] + g_headWeight
             if right < width:
                 board[head['y']][right] = board[head['y']][right] + g_headWeight
-        
+
         # add my snake and other snakes bodies to the board
         for segment in snake['body']:
             board[segment['y']][segment['x']] = g_bodyWeight
-    
+
     return board
 
 def get_path_to_food(a_star_object, head, food):
@@ -53,7 +58,7 @@ def get_path_to_food(a_star_object, head, food):
 
 def move_to_food_t(head, path):
     return get_direction_from_path((head['x'], head['y']), path[1])
-    
+
 # NOTE maybe do a flood fill to check that getting the food won't trap it
 def move_to_food (a_star_object, head, food):
     min_distance = float('inf')
@@ -67,7 +72,7 @@ def move_to_food (a_star_object, head, food):
             if len(path) < min_distance:
                 min_distance = len(path)
                 min_path = path
-    
+
     if min_path:
         return get_direction_from_path((head['x'], head['y']), min_path[1])
     return None
@@ -93,7 +98,7 @@ def chase_tail(a_star_object, board, height, width, mySnake, growing):
     else:
         return None
 
-# even though the snake may have a clear path to the food 
+# even though the snake may have a clear path to the food
 # the hypot may cause it to collide with another snake
 # NOTE maybe return a list of prioratized moves
 # if the snake needs to move diagonal up and right then right is always tried first in this case
@@ -105,13 +110,13 @@ def get_direction_from_path(start, finish):
     dx = x1 - x0
     dy = y1 - y0
 
-    if dx > 0:	   
-        return 'right'	       
-    elif dy > 0:	   
-        return 'down'	      
-    elif dx < 0:	   
-        return 'left'	       
-    elif dy < 0:	   
+    if dx > 0:
+        return 'right'
+    elif dy > 0:
+        return 'down'
+    elif dx < 0:
+        return 'left'
+    elif dy < 0:
         return 'up'
 
     # directions = []
@@ -124,13 +129,13 @@ def get_direction_from_path(start, finish):
     #     directions.append['left']
     # if dy < 0:
     #     directions.append['up']
-    
+
     # return directions[0]
-    
+
 # check that moving in a direction won't kill it
 # if it won't die return the current direction
 # else try another direction
-# return the next best move that won't kill it (hopefully) 
+# return the next best move that won't kill it (hopefully)
 def check_direction(board, height, width, head, tail, health, direction):
     next_head = head
 
@@ -157,7 +162,7 @@ def check_direction(board, height, width, head, tail, health, direction):
         return None
 
     # Need to improve this but it kinda works
-    # deepcopy the board 
+    # deepcopy the board
     # temp = [r[:] for r in board]
 
     # stack = [(x, y)]
@@ -193,7 +198,7 @@ def get_adjacent_squares(board, height, width, location):
 
 # quickly grow to size 10? then follow tail while health is above 80%?
 # NOTE maybe try to trap another snake if it is along the edge of the board
-# NOTE maybe look for encirclements when the snake is much larger than an enemy 
+# NOTE maybe look for encirclements when the snake is much larger than an enemy
 def get_next_move(board, height, width, food, mySnake, health):
 
     # get coords for my snakes head
@@ -206,33 +211,37 @@ def get_next_move(board, height, width, food, mySnake, health):
     next_move = None
     if path:
         next_move = move_to_food_t( mySnake[0], path)
-   
+
     # find food
     # NOTE maybe break this into 2 functions... 1 to get the distance to the closest food and 1 to move there
     # NOTE this could be useful for when the snake gets long and should only try to get food when it is close
     #next_move = move_to_food(a_star_object, mySnake[0], food)
-   
+
     # chase tale when larger or health is high
-    if 10 < len(mySnake) < 20 and 80 < health or next_move == None:
+    # Condition 1
+    if (len(mySnake) in range(10,21) and health > 80) or next_move == None:
+        log_it("Condition 1")
         growing = (True if health == 100 else False)
         next_move = chase_tail(a_star_object, board, height, width, mySnake, growing)
 
      # chase tale when larger or health is high
      # NOTE might be worth prioratizing getting food that is close by (3 tiles?)
-    if 20 < len(mySnake) and 60 < health or next_move == None:
+     # Condition 2
+    if (len(mySnake) > 20 and health > 60) or next_move == None:
+        log_it("Condition 2")
         if path and len(path) < width / 4 and health < 80:
             next_move = move_to_food_t( mySnake[0], path)
         else:
             growing = (True if health == 100 else False)
             next_move = chase_tail(a_star_object, board, height, width, mySnake, growing)
-   
+
     # if we can eat or chase tail do that
     if next_move:
         return next_move
-    
-    # otherwise hope that we don't die 
+
+    # otherwise hope that we don't die
     squares = get_adjacent_squares(board, height, width, (mySnake[0]['x'], mySnake[0]['y']))
-    
+
     # move to the next avaliable square
     if squares:
         return get_direction_from_path((mySnake[0]['x'], mySnake[0]['y']), squares[0])
@@ -241,6 +250,3 @@ def get_next_move(board, height, width, food, mySnake, health):
         print('Why the f are we here?')
         moves = ['up', 'right', 'down', 'left']
         return moves[random.randint(0,3)]
-
-    
-
