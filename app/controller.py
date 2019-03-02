@@ -7,6 +7,7 @@ def setup_board(height, width, snakes, mySnake, myID):
     # create list of snake locations
     for snake in snakes:
         
+        # add other snakes potential next moves to the board
         if snake['id'] != myID:
             head = snake['body'][0]
 
@@ -23,12 +24,14 @@ def setup_board(height, width, snakes, mySnake, myID):
                 board[head['y']][left] = 0
             if right < width:
                  board[head['y']][right] = 0
-            
+        
+        # add my snake and other snakes bodies to the board
         for segment in snake['body']:
             board[segment['y']][segment['x']] = 0
     
     return board
-
+    
+# NOTE maybe do a flood fill to check that getting the food won't trap it
 def move_to_food (a_star_object, head, food):
     min_distance = float('inf')
     min_path = None
@@ -52,7 +55,7 @@ def chase_tail(a_star_object, board, height, width, mySnake, growing):
 
     # temporarily let the tail be a valid place to path to
     board[tail[1]][tail[0]] = 1
-    path = a_star_object.astar(tuple(head), tuple(tail))
+    path = a_star_object.astar(head, tail)
     board[tail[1]][tail[0]] = 0
 
     # if there is a path and the tail is growing path to a square next to the tail
@@ -69,6 +72,9 @@ def chase_tail(a_star_object, board, height, width, mySnake, growing):
 
 # even though the snake may have a clear path to the food 
 # the hypot may cause it to collide with another snake
+# NOTE maybe return a list of prioratized moves
+# if the snake needs to move diagonal up and right then right is always tried first in this case
+# returning a list or other valid moves may prevent the snake from doing stupid shit
 def get_direction_from_path(start, finish):
     x0, y0 = start
     x1, y1 = finish
@@ -85,6 +91,7 @@ def get_direction_from_path(start, finish):
     elif dy < 0:
         return 'up'
 
+# returns a list of squares that are on the board adjacent to the snake head
 def get_adjacent_squares(board, height, width, location):
     x, y = location
     return[(ax, ay) for ax, ay in[(x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y)] if 0 <= ax < width and 0 <= ay < height and board[ay][ax] == 1]
@@ -98,7 +105,9 @@ def get_next_move(board, height, width, food, mySnake, health):
     # create a_star_object for pathfinding
     a_star_object = astar.AStarAlgorithm(board, width, height)
    
-    #find food
+    # find food
+    # NOTE maybe break this into 2 functions... 1 to get the distance to the closest food and 1 to move there
+    # NOTE this could be useful for when the snake gets long and should only try to get food when it is close
     next_move = move_to_food(a_star_object, mySnake[0], food)
    
     # chase tale when larger or health is high
@@ -107,6 +116,7 @@ def get_next_move(board, height, width, food, mySnake, health):
         next_move = chase_tail(a_star_object, board, height, width, mySnake, growing)
 
      # chase tale when larger or health is high
+     # NOTE might be worth prioratizing getting food that is close by (3 tiles?)
     if 20 < len(mySnake) and 60 < health or next_move == None:
         growing = (True if health == 100 else False)
         next_move = chase_tail(a_star_object, board, height, width, mySnake, growing)
