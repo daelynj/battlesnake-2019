@@ -1,5 +1,9 @@
 import astar, math, sys, random
 
+g_headWeight = 5
+g_bodyWeight = 50
+g_freeWeight = 1
+
 def setup_board(height, width, snakes, myID):
     # create general board
     board = [[1 for col in range(width)] for row in range(height)]
@@ -18,17 +22,17 @@ def setup_board(height, width, snakes, myID):
             right = head['x'] + 1
 
             if top > 0:
-                board[top][head['x']] = 0
+                board[top][head['x']] = board[top][head['x']] + g_headWeight
             if bottom < height:
-                board[bottom][head['x']] = 0
+                board[bottom][head['x']] = board[bottom][head['x']] + g_headWeight
             if left > 0:
-                board[head['y']][left] = 0
+                board[head['y']][left] = board[head['y']][left] + g_headWeight
             if right < width:
-                 board[head['y']][right] = 0
+                board[head['y']][right] = board[head['y']][right] + g_headWeight
         
         # add my snake and other snakes bodies to the board
         for segment in snake['body']:
-            board[segment['y']][segment['x']] = 0
+            board[segment['y']][segment['x']] = g_bodyWeight
     
     return board
 
@@ -73,9 +77,9 @@ def chase_tail(a_star_object, board, height, width, mySnake, growing):
     tail = (mySnake[-1]['x'], mySnake[-1]['y'])
 
     # temporarily let the tail be a valid place to path to
-    board[tail[1]][tail[0]] = 1
+    board[tail[1]][tail[0]] = g_freeWeight
     path = a_star_object.astar(head, tail)
-    board[tail[1]][tail[0]] = 0
+    board[tail[1]][tail[0]] = g_bodyWeight
 
     # if there is a path and the tail is growing path to a square next to the tail
     if path and growing:
