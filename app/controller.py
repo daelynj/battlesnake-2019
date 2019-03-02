@@ -83,18 +83,27 @@ def get_direction_from_path(start, finish):
     dx = x1 - x0
     dy = y1 - y0
 
-    directions = []
+    if dx > 0:	   
+        return 'right'	       
+    elif dy > 0:	   
+        return 'down'	      
+    elif dx < 0:	   
+        return 'left'	       
+    elif dy < 0:	   
+        return 'up'
 
-    if dx > 0:
-        directions.append['right']
-    if dy > 0:
-        directions.append['down']
-    if dx < 0:
-        directions.append['left']
-    if dy < 0:
-        directions.append['up']
+    # directions = []
+
+    # if dx > 0:
+    #     directions.append['right']
+    # if dy > 0:
+    #     directions.append['down']
+    # if dx < 0:
+    #     directions.append['left']
+    # if dy < 0:
+    #     directions.append['up']
     
-    return directions[0]
+    # return directions[0]
     
 # check that moving in a direction won't kill it
 # if it die return the current direction
