@@ -3,7 +3,6 @@ from controller import log_it
 from timeit import default_timer as timer
 from api import ping_response, start_response, move_response, end_response
 
-
 @bottle.route('/')
 def index():
     return '''
@@ -63,13 +62,15 @@ def move():
     if debug:
         start = timer()
 
-    log_it("=====TURN====\n" + str(data['turn']) + "=====TURN=====\n")
+    log_it("\n=====TURN====\n" + str(data['turn']) + "\n=====TURN=====")
 
     # generate a board and add enemy snakes to it (should I add my body as well?)
     board = controller.setup_board(height, width, snakes, myID)
-    log_it('====BOARD====\n')
-    log_it(board)
-    log_it('\n====END BOARD====\n')
+    log_it('\n====BOARD====')
+    for line in board:
+        log_it('\n')
+        log_it(line)
+    log_it('\n====END BOARD====')
 
     # calculate next move
 
@@ -87,7 +88,7 @@ def move():
         end = timer()
         print("RUNTIME: {0}ms. MAX 200ms, currently using {1}%".format(((end - start) * 1000),(((end - start) * 1000) / 2)))
 
-    log_it("\n=====END MOVE=====\n")
+    log_it("\n=====END MOVE=====\n\n")
     return move_response(next_move)
 
 
