@@ -148,7 +148,7 @@ def check_direction(board, height, width, head, tail, health, direction):
     else:
         print('direction not okay')
         squares = get_adjacent_squares(board, height, width, (head['x'], head['y']))
-        if square:
+        if squares:
             return get_direction_from_path((head['x'], head['y']), squares[0])
         return None
 
@@ -216,8 +216,11 @@ def get_next_move(board, height, width, food, mySnake, health):
      # chase tale when larger or health is high
      # NOTE might be worth prioratizing getting food that is close by (3 tiles?)
     if 20 < len(mySnake) and 60 < health or next_move == None:
-        growing = (True if health == 100 else False)
-        next_move = chase_tail(a_star_object, board, height, width, mySnake, growing)
+        if path and len(path) < width / 4 and health < 80:
+            next_move = move_to_food_t( mySnake[0], path)
+        else:
+            growing = (True if health == 100 else False)
+            next_move = chase_tail(a_star_object, board, height, width, mySnake, growing)
    
     # if we can eat or chase tail do that
     if next_move:
