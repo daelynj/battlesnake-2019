@@ -218,13 +218,17 @@ def get_next_move(board, height, width, food, mySnake, health):
     #next_move = move_to_food(a_star_object, mySnake[0], food)
 
     # chase tale when larger or health is high
+    # Condition 1
     if (len(mySnake) in range(10,21) and health > 80) or next_move == None:
+        log_it("Condition 1")
         growing = (True if health == 100 else False)
         next_move = chase_tail(a_star_object, board, height, width, mySnake, growing)
 
      # chase tale when larger or health is high
      # NOTE might be worth prioratizing getting food that is close by (3 tiles?)
+     # Condition 2
     if (len(mySnake) > 20 and health > 60) or next_move == None:
+        log_it("Condition 2")
         if path and len(path) < width / 4 and health < 80:
             next_move = move_to_food_t( mySnake[0], path)
         else:

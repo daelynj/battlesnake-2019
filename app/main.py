@@ -63,18 +63,18 @@ def move():
     if debug:
         start = timer()
 
-    log_it("=====TURN====\n" + str(data['turn']) + "=====TURN=====")
+    log_it("=====TURN====\n" + str(data['turn']) + "=====TURN=====\n")
 
     # generate a board and add enemy snakes to it (should I add my body as well?)
     board = controller.setup_board(height, width, snakes, myID)
-    log_it('====BOARD====')
+    log_it('====BOARD====\n')
     log_it(board)
-    log_it('====END BOARD====')
+    log_it('\n====END BOARD====\n')
 
     # calculate next move
 
     next_move = controller.check_direction(board, height, width, mySnake[0], mySnake[-1], health, next_move)
-    log_it("=====MOVE=====")
+    log_it("\n=====MOVE=====\n")
     log_it(next_move)
 
     # NOTE create override for when the snake backtracks on itself
@@ -87,7 +87,7 @@ def move():
         end = timer()
         print("RUNTIME: {0}ms. MAX 200ms, currently using {1}%".format(((end - start) * 1000),(((end - start) * 1000) / 2)))
 
-    log_it("=====END MOVE=====")
+    log_it("\n=====END MOVE=====\n")
     return move_response(next_move)
 
 
