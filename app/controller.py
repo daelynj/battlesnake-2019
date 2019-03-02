@@ -1,6 +1,6 @@
 import astar, math, sys, random
 
-def setup_board(height, width, snakes, mySnake, myID):
+def setup_board(height, width, snakes, myID):
     # create general board
     board = [[1 for col in range(width)] for row in range(height)]
 
@@ -8,6 +8,7 @@ def setup_board(height, width, snakes, mySnake, myID):
     for snake in snakes:
         
         # add other snakes potential next moves to the board
+        # NOTE this can cause issues if the snake is near a corner
         if snake['id'] != myID:
             head = snake['body'][0]
 
@@ -62,7 +63,7 @@ def chase_tail(a_star_object, board, height, width, mySnake, growing):
     if path and growing:
         squares = get_adjacent_squares(board, height, width, tail)
         for square in squares:
-            path = a_star_object.astar(tuple(head), tuple(square))
+            path = a_star_object.astar(head, square)
             if path:
                 return get_direction_from_path(head, list(path)[1])
     elif path and not growing:
@@ -82,14 +83,53 @@ def get_direction_from_path(start, finish):
     dx = x1 - x0
     dy = y1 - y0
 
+    directions = []
+
     if dx > 0:
-        return 'right'
-    elif dy > 0:
-        return 'down'
-    elif dx < 0:
-        return 'left'
-    elif dy < 0:
-        return 'up'
+        directions.append['right']
+    if dy > 0:
+        directions.append['down']
+    if dx < 0:
+        directions.append['left']
+    if dy < 0:
+        directions.append['up']
+    
+    return directions[0]
+    
+# check that moving in a direction won't kill it
+# if it die return the current direction
+# else preform a flood fill or something on the open adjacnet squares
+# return the next best move that won't kill it (hopefully) 
+def check_direction(board, head, directions):
+    # Need to improve this but it kinda works
+    # deepcopy the board 
+    # temp = [r[:] for r in board]
+
+    # stack = [(x, y)]
+    # count = 0
+
+    # while stack:
+    #     x, y = stack.pop()
+
+    #     if temp[x][y] == 1:
+    #         temp[x][y] = 0
+    #         count += 1
+    #         if x > 0:
+    #             stack.append((x-1, y))
+    #         if x < width-1:
+    #             stack.append((x+1, y))
+    #         if y > 0:
+    #             stack.append((x, y-1))
+    #         if y < height-1:
+    #             stack.append((x, y+1))
+
+    # print('Floodfill count: %d' % count)
+
+    # if 0 < count <  (width * height) - 2*(num_snakes * length):
+    #     board = [r[:] for r in temp]
+
+    # return board
+    return None
 
 # returns a list of squares that are on the board adjacent to the snake head
 def get_adjacent_squares(board, height, width, location):
@@ -97,6 +137,8 @@ def get_adjacent_squares(board, height, width, location):
     return[(ax, ay) for ax, ay in[(x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y)] if 0 <= ax < width and 0 <= ay < height and board[ay][ax] == 1]
 
 # quickly grow to size 10? then follow tail while health is above 80%?
+# NOTE maybe try to trap another snake if it is along the edge of the board
+# NOTE maybe look for encirclements when the snake is much larger than an enemy 
 def get_next_move(board, height, width, food, mySnake, health):
 
     # get coords for my snakes head

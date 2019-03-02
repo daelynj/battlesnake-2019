@@ -63,7 +63,7 @@ def move():
         start = timer()
 
     # generate a board and add enemy snakes to it (should I add my body as well?)
-    board = controller.setup_board(height, width, snakes, mySnake, myID)
+    board = controller.setup_board(height, width, snakes, myID)
 
     # calculate next move
     next_move = controller.get_next_move(board, height, width, food, mySnake, health)
