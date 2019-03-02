@@ -46,7 +46,7 @@ def start():
 @bottle.post('/move')
 def move():
     debug = False
-   
+
     data = bottle.request.json
 
     width = data['board']['width']
@@ -68,10 +68,10 @@ def move():
     # calculate next move
     next_move = controller.get_next_move(board, height, width, food, mySnake, health)
 
-    # NOTE create override for when the snake backtracks on itself 
+    # NOTE create override for when the snake backtracks on itself
     # ie down then next turn does up
 
-    # NOTE create a final check to ensure that if the snake does die that there 
+    # NOTE create a final check to ensure that if the snake does die that there
     # were no valid moves still left
 
     if debug:
