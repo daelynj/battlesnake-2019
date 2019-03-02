@@ -31,6 +31,24 @@ def setup_board(height, width, snakes, myID):
             board[segment['y']][segment['x']] = 0
     
     return board
+
+def get_path_to_food(a_star_object, head, food):
+    min_distance = float('inf')
+    min_path = None
+
+    for snack in food:
+        path = a_star_object.astar((head['x'], head['y']), (snack['x'], snack['y']))
+
+        if path:
+            path = list(path)
+            if len(path) < min_distance:
+                min_distance = len(path)
+                min_path = path
+
+    return (min_path if min_path else None)
+
+def move_to_food_t(head, path):
+    return get_direction_from_path((head['x'], head['y']), path[1])
     
 # NOTE maybe do a flood fill to check that getting the food won't trap it
 def move_to_food (a_star_object, head, food):
@@ -106,10 +124,34 @@ def get_direction_from_path(start, finish):
     # return directions[0]
     
 # check that moving in a direction won't kill it
-# if it die return the current direction
-# else preform a flood fill or something on the open adjacnet squares
+# if it won't die return the current direction
+# else try another direction
 # return the next best move that won't kill it (hopefully) 
-def check_direction(board, head, directions):
+def check_direction(board, height, width, head, tail, health, direction):
+    next_head = head
+
+    if direction == 'right':
+        next_head['x'] = next_head['x'] + 1
+    elif direction == 'left':
+        next_head['x'] = next_head['x'] - 1
+    elif direction == 'up':
+        next_head['y'] = next_head['y'] - 1
+    elif direction == 'down':
+        next_head['y'] = next_head['y'] + 1
+
+    if health != 100:
+        board[tail['y']][tail['x']] = 1
+
+    if board[next_head['y']][next_head['x']] == 1:
+        print('direction okay')
+        return direction
+    else:
+        print('direction not okay')
+        squares = get_adjacent_squares(board, height, width, (head['x'], head['y']))
+        if square:
+            return get_direction_from_path((head['x'], head['y']), squares[0])
+        return None
+
     # Need to improve this but it kinda works
     # deepcopy the board 
     # temp = [r[:] for r in board]
@@ -155,11 +197,16 @@ def get_next_move(board, height, width, food, mySnake, health):
 
     # create a_star_object for pathfinding
     a_star_object = astar.AStarAlgorithm(board, width, height)
+
+    path = get_path_to_food(a_star_object, mySnake[0], food)
+    next_move = None
+    if path:
+        next_move = move_to_food_t( mySnake[0], path)
    
     # find food
     # NOTE maybe break this into 2 functions... 1 to get the distance to the closest food and 1 to move there
     # NOTE this could be useful for when the snake gets long and should only try to get food when it is close
-    next_move = move_to_food(a_star_object, mySnake[0], food)
+    #next_move = move_to_food(a_star_object, mySnake[0], food)
    
     # chase tale when larger or health is high
     if 10 < len(mySnake) < 20 and 80 < health or next_move == None:
@@ -177,7 +224,7 @@ def get_next_move(board, height, width, food, mySnake, health):
         return next_move
     
     # otherwise hope that we don't die 
-    squares = get_adjacent_squares(board, height, width, (mySnake[0]['x'], mySnake[0]['x']))
+    squares = get_adjacent_squares(board, height, width, (mySnake[0]['x'], mySnake[0]['y']))
     
     # move to the next avaliable square
     if squares:

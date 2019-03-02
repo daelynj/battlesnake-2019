@@ -67,6 +67,8 @@ def move():
 
     # calculate next move
     next_move = controller.get_next_move(board, height, width, food, mySnake, health)
+    
+    next_move = controller.check_direction(board, height, width, mySnake[0], mySnake[-1], health, next_move)
 
     # NOTE create override for when the snake backtracks on itself
     # ie down then next turn does up
