@@ -4,3 +4,7 @@ battlesnake
 .idea
 .vscode
 test.py
+venv/
+.serverless
+
+node_modules/
