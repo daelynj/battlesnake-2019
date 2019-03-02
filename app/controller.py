@@ -39,10 +39,6 @@ def setup_board(height, width, snakes, myID):
         for segment in snake['body']:
             board[segment['y']][segment['x']] = g_bodyWeight
 
-    log_it('====BOARD====')
-    log_it(board)
-    log_it('====END BOARD====')
-
     return board
 
 def get_path_to_food(a_star_object, head, food):
@@ -222,13 +218,13 @@ def get_next_move(board, height, width, food, mySnake, health):
     #next_move = move_to_food(a_star_object, mySnake[0], food)
 
     # chase tale when larger or health is high
-    if 10 < len(mySnake) < 20 and 80 < health or next_move == None:
+    if (len(mySnake) in range(10,21) and health > 80) or next_move == None:
         growing = (True if health == 100 else False)
         next_move = chase_tail(a_star_object, board, height, width, mySnake, growing)
 
      # chase tale when larger or health is high
      # NOTE might be worth prioratizing getting food that is close by (3 tiles?)
-    if 20 < len(mySnake) and 60 < health or next_move == None:
+    if (len(mySnake) > 20 and health > 60) or next_move == None:
         if path and len(path) < width / 4 and health < 80:
             next_move = move_to_food_t( mySnake[0], path)
         else:

@@ -67,6 +67,9 @@ def move():
 
     # generate a board and add enemy snakes to it (should I add my body as well?)
     board = controller.setup_board(height, width, snakes, myID)
+    log_it('====BOARD====')
+    log_it(board)
+    log_it('====END BOARD====')
 
     # calculate next move
 
